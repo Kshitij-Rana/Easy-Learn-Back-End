@@ -41,7 +41,26 @@ function isAdmin($token){
     $result = mysqli_query($conn,$sql);
     if($result){
         $row = mysqli_fetch_assoc($result);
-        if ($row['role'] == 'admin'){
+        if ($row['role'] == 'admin'|| $row['role'] == 'mainadmin'){
+            return true;
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
+}
+function isMainAdmin($token){
+    $userId = getUserId($token);
+    global $conn;
+    if ($userId === null) {
+        return false; // or handle this case differently based on your requirements
+    }
+    $sql = "Select * from users where user_id = '$userId'";
+    $result = mysqli_query($conn,$sql);
+    if($result){
+        $row = mysqli_fetch_assoc($result);
+        if ($row['role'] == 'mainadmin'){
             return true;
         }else{
             return false;

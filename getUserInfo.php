@@ -7,7 +7,7 @@ global $conn;
 $token = $_POST['token'];
 $userId = getUserId($token);
 
-$sql = "SELECT `full_name`, `email`, `role`, `address`, `bio`, `otp`, `profile_img` FROM `users` WHERE `user_id`=$userId";
+$sql = "SELECT `full_name`, `email`, `role`, `address`, `bio`, `otp`, `profile_img`,`isBlocked` FROM `users` WHERE `user_id`=$userId";
 $result = mysqli_query($conn,$sql);
 
 if($result){

@@ -28,7 +28,8 @@ courses.is_online,
 courses.description, 
 course_counts.number_of_courses, 
 course_content_counts.number_of_contents, 
-users.full_name 
+users.full_name,
+progress_tracking_counts.number_of_progress_trackings
 FROM 
 orders 
 JOIN 
@@ -37,28 +38,39 @@ JOIN
 courses ON courses.course_id = order_details.course_id 
 LEFT JOIN 
 (
-    SELECT 
-        order_id, 
-        COUNT(course_id) AS number_of_courses 
-    FROM 
-        order_details 
-    GROUP BY 
-        order_id
+SELECT 
+    order_id, 
+    COUNT(course_id) AS number_of_courses 
+FROM 
+    order_details 
+GROUP BY 
+    order_id
 ) course_counts ON orders.order_id = course_counts.order_id 
 LEFT JOIN 
 (
-    SELECT 
-        course_id, 
-        COUNT(content_id) AS number_of_contents 
-    FROM 
-        course_content 
-    GROUP BY 
-        course_id
+SELECT 
+    course_id, 
+    COUNT(content_id) AS number_of_contents 
+FROM 
+    course_content 
+GROUP BY 
+    course_id
 ) course_content_counts ON courses.course_id = course_content_counts.course_id 
+LEFT JOIN 
+(
+SELECT 
+    course_id, 
+    COUNT(*) AS number_of_progress_trackings 
+FROM 
+    progress_tracking 
+GROUP BY 
+    course_id
+) progress_tracking_counts ON courses.course_id = progress_tracking_counts.course_id 
 JOIN 
 users ON users.user_id = orders.user_id 
 WHERE 
 orders.user_id = $userId;
+
 ";
 $result = mysqli_query($conn,$sql);
 $paidCourses=[];

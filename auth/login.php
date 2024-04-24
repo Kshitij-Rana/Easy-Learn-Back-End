@@ -69,15 +69,28 @@ if(isset($_POST['email']) && isset($_POST['password'])){
             $inserttokensql = "INSERT INTO `personal_access_token`( `token`, `user_id`) VALUES ('$accessToken','$userId')";
             $result = mysqli_query($conn,$inserttokensql);
             if($result){
-                echo json_encode(
-                    array(
-                        "success" => true,
-                        "message" => "Logged in",
-                        "role" =>$role,
-                        "token" => $accessToken,
-                        "user_id"=>$userId
-                    )
+                $selectUSer = "select * from users where email = '$email'";
+                $result = mysqli_query($conn,$selectUSer);
+                $row = mysqli_fetch_assoc($result);
+                if($row['isBlocked']){
+                    echo json_encode(
+                        array(
+                            "success" => false,
+                            "message" => "User is blocked!",
+                        )
                     );
+              
+                } else {
+                    echo json_encode(
+                        array(
+                            "success" => true,
+                            "message" => "Logged in",
+                            "role" => $role,
+                            "token" => $accessToken,
+                            "user_id" => $userId
+                        )
+                    );
+                }
             }else{
                 echo json_encode(
                     array(
